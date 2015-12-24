@@ -61,6 +61,8 @@
 }
 
 - (void)layoutSubviews{
+    [self.scrollView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
     CGFloat currentLayoutWidth = .0f;
     self.segmentCounts = [self getSegmentsCount];
     for (NSInteger i = 0; i < self.segmentCounts; i++) {
@@ -72,11 +74,14 @@
     }
     [self.scrollView setContentSize:CGSizeMake(currentLayoutWidth, CGRectGetHeight(self.bounds))];
     
-    if (self.indicatorView == nil) {
-        self.indicatorView = [[UIView alloc] initWithFrame:CGRectMake(self.indicatorMargin, CGRectGetHeight(self.bounds) - self.selectionIndicatorHeight, [self getSegmentWidthAtIndex:0] - 2 * self.indicatorMargin, self.selectionIndicatorHeight)];
-        [self.indicatorView setBackgroundColor:self.selectionIndicatorColor];
+    if (self.segmentCounts > 0) {
     }
-    [self addSubview:self.indicatorView];
+    if (self.indicatorView == nil) {
+        self.indicatorView = [UIView new];
+        [self addSubview:self.indicatorView];
+    }
+    [self.indicatorView setBackgroundColor:self.selectionIndicatorColor];
+    [self updateIndicatorFrame];
 }
 
 #pragma mark Private
@@ -158,7 +163,9 @@
 - (void)updateIndicatorFrame{
     CGRect indicatorFrame = self.indicatorView.frame;
     indicatorFrame.size.width = [self getSegmentWidthAtIndex:self.selectedIndex] - 2 * self.indicatorMargin;
-    indicatorFrame.origin.x =[self getStartXPositionAtIndex:self.selectedIndex] + self.indicatorMargin;
+    indicatorFrame.size.height = self.selectionIndicatorHeight;
+    indicatorFrame.origin.x = [self getStartXPositionAtIndex:self.selectedIndex] + self.indicatorMargin;
+    indicatorFrame.origin.y = CGRectGetHeight(self.bounds) - self.selectionIndicatorHeight;
     self.indicatorView.frame = indicatorFrame;
 }
 
@@ -178,6 +185,10 @@
             [self updateIndicatorFrame];
         }];
     }
+}
+
+- (void)reloadData{
+    [self layoutIfNeeded];
 }
 
 #pragma mark UIScrollViewDelegate

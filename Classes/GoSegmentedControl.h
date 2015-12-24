@@ -97,5 +97,9 @@
  *  @param index The index moved to.
  */
 - (void)moveToIndex:(NSUInteger)index;
+/**
+ *  Reload data if data sources are changed.
+ */
+- (void)reloadData;
 
 @end
