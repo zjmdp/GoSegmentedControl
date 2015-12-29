@@ -96,27 +96,7 @@
             break;
         }
     }
-    
-    if ([self.delegate respondsToSelector:@selector(segmentedControl:willMoveToIndex:)]) {
-        [self.delegate segmentedControl:self willMoveToIndex:self.selectedIndex];
-    }
-    
-    CGFloat selectedItemRightPosition = [self getStartXPositionAtIndex:self.selectedIndex] + [self getSegmentWidthAtIndex:self.selectedIndex];
-    CGFloat selectedItemLeftPosition = [self getStartXPositionAtIndex:self.selectedIndex];
-    
-    if (selectedItemRightPosition > CGRectGetWidth(self.scrollView.bounds)) {
-        [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentOffset.x + selectedItemRightPosition - CGRectGetWidth(self.scrollView.bounds), 0) animated:YES];
-    }else if(selectedItemLeftPosition < 0){
-        [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentOffset.x + selectedItemLeftPosition, 0) animated:YES];
-    } else{
-        [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
-            [self updateIndicatorFrame];
-        }completion:^(BOOL finished) {
-            if ([self.delegate respondsToSelector:@selector(segmentedControl:didMoveToIndex:)]) {
-                [self.delegate segmentedControl:self didMoveToIndex:self.selectedIndex];
-            }
-        }];
-    }
+    [self updateStateWithRespondingDelegate:YES];
 }
 
 - (NSInteger)getSegmentsCount{
@@ -169,21 +149,58 @@
     self.indicatorView.frame = indicatorFrame;
 }
 
+- (void)updateStateWithRespondingDelegate:(BOOL)isResponding{
+    if (isResponding) {
+        if ([self.delegate respondsToSelector:@selector(segmentedControl:willMoveToIndex:)]) {
+            [self.delegate segmentedControl:self willMoveToIndex:self.selectedIndex];
+        }
+    }
+    
+    CGFloat selectedItemLeftPosition = [self getStartXPositionAtIndex:self.selectedIndex];
+    CGFloat selectedItemWidth = [self getSegmentWidthAtIndex:self.selectedIndex];
+    
+    if (selectedItemLeftPosition + selectedItemWidth / 2 > CGRectGetWidth(self.scrollView.bounds) / 2) {
+        if (self.scrollView.contentOffset.x < self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds)) {
+            CGFloat newOffset = .0f;
+            if (self.scrollView.contentOffset.x + selectedItemWidth / 2 < self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds)) {
+                newOffset = self.scrollView.contentOffset.x + selectedItemWidth / 2;
+            }else{
+                newOffset = self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds);
+            }
+            [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+                [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
+            }];
+        }else{
+            [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+                [self updateIndicatorFrame];
+            }];
+        }
+    }else{
+        if (self.scrollView.contentOffset.x > 0) {
+            CGFloat newOffset = (self.scrollView.contentOffset.x - selectedItemWidth / 2 > 0) ? (self.scrollView.contentOffset.x - selectedItemWidth / 2) : 0;
+            [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+                [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
+            }];
+        }else{
+            [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+                [self updateIndicatorFrame];
+            }];
+        }
+    }
+    
+    if (isResponding && [self.delegate respondsToSelector:@selector(segmentedControl:didMoveToIndex:)]) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.indicatorAnimationDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.delegate segmentedControl:self didMoveToIndex:self.selectedIndex];
+        });
+    }
+    
+}
+
 #pragma mark Public
 - (void)moveToIndex:(NSUInteger)index{
-    self.selectedIndex = index;
-    
-    CGFloat selectedItemRightPosition = [self getStartXPositionAtIndex:self.selectedIndex] + [self getSegmentWidthAtIndex:self.selectedIndex];
-    CGFloat selectedItemLeftPosition = [self getStartXPositionAtIndex:self.selectedIndex];
-    
-    if (selectedItemRightPosition > CGRectGetWidth(self.scrollView.bounds)) {
-        [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentOffset.x + selectedItemRightPosition - CGRectGetWidth(self.scrollView.bounds), 0) animated:YES];
-    }else if(selectedItemLeftPosition < 0){
-        [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentOffset.x + selectedItemLeftPosition, 0) animated:YES];
-    } else{
-        [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
-            [self updateIndicatorFrame];
-        }];
+    if (self.selectedIndex != index) {
+        self.selectedIndex = index;
+        [self updateStateWithRespondingDelegate:NO];
     }
 }
 

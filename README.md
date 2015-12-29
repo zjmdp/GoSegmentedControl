@@ -14,7 +14,7 @@
 ###CocoaPods
 ```ruby
 
-pod 'GoSegmentedControl', '~> 0.2'
+pod 'GoSegmentedControl', '~> 0.3'
 
 ```
 
