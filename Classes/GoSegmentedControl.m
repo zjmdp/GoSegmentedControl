@@ -208,6 +208,10 @@
     [self layoutIfNeeded];
 }
 
+- (UIView *)viewAtIndex:(NSUInteger)index{
+    return [self.scrollView.subviews objectAtIndex:index];
+}
+
 #pragma mark UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{

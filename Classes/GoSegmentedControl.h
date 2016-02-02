@@ -101,5 +101,13 @@
  *  Reload data if data sources are changed.
  */
 - (void)reloadData;
+/**
+ *  Accessing the view at specified index.
+ *
+ *  @param index An index locating a segment view in control.
+ *
+ *  @return The view at specified index
+ */
+- (UIView *)viewAtIndex:(NSUInteger)index;
 
 @end
