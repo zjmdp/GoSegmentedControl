@@ -90,13 +90,19 @@
  *  The margin that relative to segment view to apply to the indicator.
  */
 @property (nonatomic, assign) CGFloat indicatorMargin;
-
 /**
  *  Move the indicator the specified index.
  *
  *  @param index The index moved to.
  */
 - (void)moveToIndex:(NSUInteger)index;
+/**
+ *  Move the indicator the specified index.
+ *
+ *  @param index    The index moved to
+ *  @param animated YES to animate the transition at a constant velocity to the new offset, NO to make the transition immediate.
+ */
+- (void)moveToIndex:(NSUInteger)index animated:(BOOL)animated;
 /**
  *  Reload data if data sources are changed.
  */

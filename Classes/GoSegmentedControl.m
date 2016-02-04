@@ -96,7 +96,7 @@
             break;
         }
     }
-    [self updateStateWithRespondingDelegate:YES];
+    [self updateStateWithRespondingDelegate:YES animated:YES];
 }
 
 - (NSInteger)getSegmentsCount{
@@ -149,7 +149,7 @@
     self.indicatorView.frame = indicatorFrame;
 }
 
-- (void)updateStateWithRespondingDelegate:(BOOL)isResponding{
+- (void)updateStateWithRespondingDelegate:(BOOL)isResponding animated:(BOOL)animated{
     if (isResponding) {
         if ([self.delegate respondsToSelector:@selector(segmentedControl:willMoveToIndex:)]) {
             [self.delegate segmentedControl:self willMoveToIndex:self.selectedIndex];
@@ -167,24 +167,40 @@
             }else{
                 newOffset = self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds);
             }
-            [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+            if (animated) {
+                [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+                    [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
+                }];
+            }else{
                 [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
-            }];
+            }
         }else{
-            [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+            if (animated) {
+                [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+                    [self updateIndicatorFrame];
+                }];
+            }else{
                 [self updateIndicatorFrame];
-            }];
+            }
         }
     }else{
         if (self.scrollView.contentOffset.x > 0) {
             CGFloat newOffset = (self.scrollView.contentOffset.x - selectedItemWidth / 2 > 0) ? (self.scrollView.contentOffset.x - selectedItemWidth / 2) : 0;
-            [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+            if (animated) {
+                [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+                    [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
+                }];
+            }else{
                 [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
-            }];
+            }
         }else{
-            [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+            if (animated) {
+                [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+                    [self updateIndicatorFrame];
+                }];
+            }else{
                 [self updateIndicatorFrame];
-            }];
+            }
         }
     }
     
@@ -198,9 +214,13 @@
 
 #pragma mark Public
 - (void)moveToIndex:(NSUInteger)index{
+    [self moveToIndex:index animated:YES];
+}
+
+- (void)moveToIndex:(NSUInteger)index animated:(BOOL)animated{
     if (self.selectedIndex != index) {
         self.selectedIndex = index;
-        [self updateStateWithRespondingDelegate:NO];
+        [self updateStateWithRespondingDelegate:NO animated:animated];
     }
 }
 
