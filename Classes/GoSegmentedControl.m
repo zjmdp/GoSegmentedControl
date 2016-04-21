@@ -229,7 +229,11 @@
 }
 
 - (UIView *)viewAtIndex:(NSUInteger)index{
-    return [self.scrollView.subviews objectAtIndex:index];
+    if(index <= self.scrollView.subviews.count - 1 && index >= 0){
+        return self.scrollView.subviews[index];
+    }else{
+        return nil;
+    }
 }
 
 #pragma mark UIScrollViewDelegate
