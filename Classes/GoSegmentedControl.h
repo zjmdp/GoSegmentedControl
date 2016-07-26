@@ -69,11 +69,11 @@
 /**
  *  The object that acts as the data source of the control.
  */
-@property (nonatomic, weak) id<GoSegmentedControlDelegate> delegate;
+@property (nullable, nonatomic, weak) id<GoSegmentedControlDelegate> delegate;
 /**
  *  The object that acts as the delegate of the control.
  */
-@property (nonatomic, weak) id<GoSegmentedControlDataSource> dataSource;
+@property (nonnull, nonatomic, weak) id<GoSegmentedControlDataSource> dataSource;
 /**
  *  The tint color to apply to the indicator.
  */
