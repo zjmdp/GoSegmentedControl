@@ -114,6 +114,6 @@
  *
  *  @return The view at specified index
  */
-- (nullable UIView *)viewAtIndex:(NSUInteger)index;
+- (nullable UIView *)viewAtIndex:(NSInteger)index;
 
 @end

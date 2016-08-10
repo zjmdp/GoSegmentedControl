@@ -119,13 +119,13 @@
     }
 }
 
-- (CGFloat)getStartXPositionAtIndex:(NSInteger)index{
+- (CGFloat)getContentOffsetXAtIndex:(NSInteger)index{
     CGFloat position = .0f;
     for (NSInteger i = 0; i < index; i++) {
         CGFloat segmentWidth = [self getSegmentWidthAtIndex:i];
         position += segmentWidth;
     }
-    return position - self.scrollView.contentOffset.x;
+    return position;
 }
 
 - (UIView *)getSegmentViewAtIndex:(NSInteger)index{
@@ -144,7 +144,7 @@
     CGRect indicatorFrame = self.indicatorView.frame;
     indicatorFrame.size.width = [self getSegmentWidthAtIndex:self.selectedIndex] - 2 * self.indicatorMargin;
     indicatorFrame.size.height = self.selectionIndicatorHeight;
-    indicatorFrame.origin.x = [self getStartXPositionAtIndex:self.selectedIndex] + self.indicatorMargin;
+    indicatorFrame.origin.x = [self getContentOffsetXAtIndex:self.selectedIndex] - self.scrollView.contentOffset.x + self.indicatorMargin;
     indicatorFrame.origin.y = CGRectGetHeight(self.bounds) - self.selectionIndicatorHeight;
     self.indicatorView.frame = indicatorFrame;
 }
@@ -156,34 +156,31 @@
         }
     }
     
-    CGFloat selectedItemLeftPosition = [self getStartXPositionAtIndex:self.selectedIndex];
+    CGFloat selectedItemLeftPosition = [self getContentOffsetXAtIndex:self.selectedIndex];
     CGFloat selectedItemWidth = [self getSegmentWidthAtIndex:self.selectedIndex];
     
-    if (selectedItemLeftPosition + selectedItemWidth / 2 > CGRectGetWidth(self.scrollView.bounds) / 2) {
-        if (self.scrollView.contentOffset.x < self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds)) {
-            CGFloat newOffset = .0f;
-            if (self.scrollView.contentOffset.x + selectedItemWidth / 2 < self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds)) {
-                newOffset = self.scrollView.contentOffset.x + selectedItemWidth / 2;
-            }else{
-                newOffset = self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds);
-            }
+    if(selectedItemLeftPosition >= self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds) / 2){
+        if (animated) {
+            [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+                [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentSize.width - self.scrollView.bounds.size.width, 0)];
+                [self updateIndicatorFrame];
+            }];
+        }else{
+            [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentSize.width - self.scrollView.bounds.size.width, 0)];
+            [self updateIndicatorFrame];
+        }
+    }else if (selectedItemLeftPosition + selectedItemWidth / 2 > CGRectGetWidth(self.scrollView.bounds) / 2) {
+            CGFloat newOffset = selectedItemLeftPosition + selectedItemWidth / 2 - CGRectGetWidth(self.scrollView.bounds) / 2;
             if (animated) {
                 [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
                     [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
-                }];
-            }else{
-                [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
-            }
-        }else{
-            if (animated) {
-                [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
                     [self updateIndicatorFrame];
                 }];
             }else{
+                [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
                 [self updateIndicatorFrame];
             }
-        }
-    }else{
+    } else{
         if (self.scrollView.contentOffset.x > 0) {
             CGFloat newOffset = (self.scrollView.contentOffset.x - selectedItemWidth / 2 > 0) ? (self.scrollView.contentOffset.x - selectedItemWidth / 2) : 0;
             if (animated) {
@@ -228,7 +225,7 @@
     [self layoutIfNeeded];
 }
 
-- (UIView *)viewAtIndex:(NSUInteger)index{
+- (UIView *)viewAtIndex:(NSInteger)index{
     if(index <= self.scrollView.subviews.count - 1 && index >= 0){
         return self.scrollView.subviews[index];
     }else{
