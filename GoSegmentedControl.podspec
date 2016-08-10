@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "GoSegmentedControl"
-  s.version      = "0.6"
+  s.version      = "0.7"
   s.summary      = "GoSegmentedControl provides fully customizable and scrollable segmented control."
 
   # This description is used to generate tags and improve search results.
@@ -73,7 +73,7 @@ GoSegmentedControl provides fully customizable and scrollable segmented control 
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/zjmdp/GoSegmentedControl.git", :tag => "0.6" }
+  s.source       = { :git => "https://github.com/zjmdp/GoSegmentedControl.git", :tag => "0.7" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
