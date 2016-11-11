@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class GoSegmentedControl;
 
 @protocol GoSegmentedControlDataSource <NSObject>
@@ -20,7 +22,7 @@
  *
  *  @return The number of segmentes.
  */
-- (NSInteger)numberOfSegmentsInGoSegmentedControl:(nonnull GoSegmentedControl *)segmentedControl;
+- (NSInteger)numberOfSegmentsInGoSegmentedControl:(GoSegmentedControl *)segmentedControl;
 /**
  *  Asks the data source for a custom segment view at a particular index of the control.
  *
@@ -29,7 +31,7 @@
  *
  *  @return A segment view for the specified index.
  */
-- (nonnull UIView *)segmentedControl:(nonnull GoSegmentedControl *)segmentedControl customSegmentViewAtIndex:(NSInteger)index;
+- (UIView *)segmentedControl:(nonnull GoSegmentedControl *)segmentedControl customSegmentViewAtIndex:(NSInteger)index;
 
 @end
 
@@ -44,7 +46,7 @@
  *
  *  @return A nonnegative floating-point value that specifies the width (in points) that segment should be.
  */
-- (CGFloat)segmentedControl:(nonnull GoSegmentedControl *)segmentedControl widthForSegmentAtIndex:(NSInteger)index;
+- (CGFloat)segmentedControl:(GoSegmentedControl *)segmentedControl widthForSegmentAtIndex:(NSInteger)index;
 
 @optional
 /**
@@ -53,14 +55,14 @@
  *  @param segmentedControl The control requesting the informatin.
  *  @param index            An index locating the segment in control.
  */
-- (void)segmentedControl:(nonnull GoSegmentedControl *)segmentedControl willMoveToIndex:(NSInteger)index;
+- (void)segmentedControl:(GoSegmentedControl *)segmentedControl willMoveToIndex:(NSInteger)index;
 /**
  *  Tells the delegate that a specified segment is now moved to.
  *
  *  @param segmentedControl The control requesting the informatin.
  *  @param index            An index locating the segment in control.
  */
-- (void)segmentedControl:(nonnull GoSegmentedControl *)segmentedControl didMoveToIndex:(NSInteger)index;
+- (void)segmentedControl:(GoSegmentedControl *)segmentedControl didMoveToIndex:(NSInteger)index;
 
 @end
 
@@ -77,7 +79,7 @@
 /**
  *  The tint color to apply to the indicator.
  */
-@property (nonnull, nonatomic, strong) UIColor *selectionIndicatorColor;
+@property (nonatomic, strong) UIColor *selectionIndicatorColor;
 /**
  *  The height of the indicator.
  */
@@ -117,3 +119,5 @@
 - (nullable UIView *)viewAtIndex:(NSInteger)index;
 
 @end
+
+NS_ASSUME_NONNULL_END
