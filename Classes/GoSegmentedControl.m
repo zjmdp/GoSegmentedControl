@@ -111,7 +111,7 @@
 
 - (CGFloat)getSegmentWidthAtIndex:(NSInteger)index{
     if ([self.delegate respondsToSelector:@selector(segmentedControl:widthForSegmentAtIndex:)]) {
-        NSInteger width = [self.delegate segmentedControl:self widthForSegmentAtIndex:index];
+        CGFloat width = [self.delegate segmentedControl:self widthForSegmentAtIndex:index];
         NSAssert(width > 0, @"Segment widht must >= 0");
         return width;
     }else{
