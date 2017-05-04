@@ -155,21 +155,35 @@
             [self.delegate segmentedControl:self willMoveToIndex:self.selectedIndex];
         }
     }
-    
-    CGFloat selectedItemLeftPosition = [self getContentOffsetXAtIndex:self.selectedIndex];
-    CGFloat selectedItemWidth = [self getSegmentWidthAtIndex:self.selectedIndex];
-    
-    if(selectedItemLeftPosition >= self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds) / 2){
-        if (animated) {
+
+    CGFloat totalWidth = 0;
+    NSInteger numberOfSegmentedControl = [self getSegmentsCount];
+    for (int i = 0; i < numberOfSegmentedControl ; ++i) {
+        totalWidth += [self getSegmentWidthAtIndex:i];
+    }
+    if(totalWidth <= CGRectGetWidth(self.bounds)){
+        if(animated){
             [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
-                [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentSize.width - self.scrollView.bounds.size.width, 0)];
                 [self updateIndicatorFrame];
             }];
         }else{
-            [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentSize.width - self.scrollView.bounds.size.width, 0)];
             [self updateIndicatorFrame];
         }
-    }else if (selectedItemLeftPosition + selectedItemWidth / 2 > CGRectGetWidth(self.scrollView.bounds) / 2) {
+    }else{
+        CGFloat selectedItemLeftPosition = [self getContentOffsetXAtIndex:self.selectedIndex];
+        CGFloat selectedItemWidth = [self getSegmentWidthAtIndex:self.selectedIndex];
+
+        if(selectedItemLeftPosition >= self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds) / 2){
+            if (animated) {
+                [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+                    [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentSize.width - self.scrollView.bounds.size.width, 0)];
+                    [self updateIndicatorFrame];
+                }];
+            }else{
+                [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentSize.width - self.scrollView.bounds.size.width, 0)];
+                [self updateIndicatorFrame];
+            }
+        }else if (selectedItemLeftPosition + selectedItemWidth / 2 > CGRectGetWidth(self.scrollView.bounds) / 2) {
             CGFloat newOffset = selectedItemLeftPosition + selectedItemWidth / 2 - CGRectGetWidth(self.scrollView.bounds) / 2;
             if (animated) {
                 [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
@@ -180,27 +194,28 @@
                 [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
                 [self updateIndicatorFrame];
             }
-    } else{
-        if (self.scrollView.contentOffset.x > 0) {
-            CGFloat newOffset = (self.scrollView.contentOffset.x - selectedItemWidth / 2 > 0) ? (self.scrollView.contentOffset.x - selectedItemWidth / 2) : 0;
-            if (animated) {
-                [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+        } else{
+            if (self.scrollView.contentOffset.x > 0) {
+                CGFloat newOffset = (self.scrollView.contentOffset.x - selectedItemWidth / 2 > 0) ? (self.scrollView.contentOffset.x - selectedItemWidth / 2) : 0;
+                if (animated) {
+                    [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+                        [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
+                    }];
+                }else{
                     [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
-                }];
+                }
             }else{
-                [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
-            }
-        }else{
-            if (animated) {
-                [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+                if (animated) {
+                    [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
+                        [self updateIndicatorFrame];
+                    }];
+                }else{
                     [self updateIndicatorFrame];
-                }];
-            }else{
-                [self updateIndicatorFrame];
+                }
             }
         }
     }
-    
+
     if (isResponding && [self.delegate respondsToSelector:@selector(segmentedControl:didMoveToIndex:)]) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.indicatorAnimationDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self.delegate segmentedControl:self didMoveToIndex:self.selectedIndex];
