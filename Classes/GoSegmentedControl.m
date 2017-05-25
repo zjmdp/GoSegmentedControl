@@ -176,22 +176,22 @@
         if(selectedItemLeftPosition >= self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds) / 2){
             if (animated) {
                 [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
-                    [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentSize.width - self.scrollView.bounds.size.width, 0)];
+                    [self updateNewContentOffset:self.scrollView.contentSize.width - self.scrollView.bounds.size.width];
                     [self updateIndicatorFrame];
                 }];
             }else{
-                [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentSize.width - self.scrollView.bounds.size.width, 0)];
+                [self updateNewContentOffset:self.scrollView.contentSize.width - self.scrollView.bounds.size.width];
                 [self updateIndicatorFrame];
             }
         }else if (selectedItemLeftPosition + selectedItemWidth / 2 > CGRectGetWidth(self.scrollView.bounds) / 2) {
             CGFloat newOffset = selectedItemLeftPosition + selectedItemWidth / 2 - CGRectGetWidth(self.scrollView.bounds) / 2;
             if (animated) {
                 [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
-                    [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
+                    [self updateNewContentOffset:newOffset];
                     [self updateIndicatorFrame];
                 }];
             }else{
-                [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
+                [self updateNewContentOffset:newOffset];
                 [self updateIndicatorFrame];
             }
         } else{
@@ -199,10 +199,10 @@
                 CGFloat newOffset = (self.scrollView.contentOffset.x - selectedItemWidth / 2 > 0) ? (self.scrollView.contentOffset.x - selectedItemWidth / 2) : 0;
                 if (animated) {
                     [UIView animateWithDuration:self.indicatorAnimationDuration animations:^{
-                        [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
+                        [self updateNewContentOffset:newOffset];
                     }];
                 }else{
-                    [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
+                    [self updateNewContentOffset:newOffset];
                 }
             }else{
                 if (animated) {
@@ -222,6 +222,14 @@
         });
     }
     
+}
+
+- (void)updateNewContentOffset:(CGFloat)newOffset{
+    if(newOffset > self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds)){
+        [self.scrollView setContentOffset:CGPointMake(self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds), 0)];
+    }else{
+        [self.scrollView setContentOffset:CGPointMake(newOffset, 0)];
+    }
 }
 
 #pragma mark Public
