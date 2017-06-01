@@ -245,6 +245,7 @@
 }
 
 - (void)reloadData{
+    [self setNeedsLayout];
     [self layoutIfNeeded];
 }
 
