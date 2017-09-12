@@ -146,7 +146,9 @@
     indicatorFrame.size.height = self.selectionIndicatorHeight;
     indicatorFrame.origin.x = [self getContentOffsetXAtIndex:self.selectedIndex] - self.scrollView.contentOffset.x + self.indicatorMargin;
     indicatorFrame.origin.y = CGRectGetHeight(self.bounds) - self.selectionIndicatorHeight;
-    self.indicatorView.frame = indicatorFrame;
+    if(!CGRectEqualToRect(self.indicatorView.frame,indicatorFrame)){
+        self.indicatorView.frame = indicatorFrame;
+    }
 }
 
 - (void)updateStateWithRespondingDelegate:(BOOL)isResponding animated:(BOOL)animated{
